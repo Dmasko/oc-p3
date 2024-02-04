@@ -679,10 +679,3 @@ text-align: center;
 .bouton-validation, button , a, #bouton-ajouter-photo	{
 	cursor: pointer;
 }
-
-.title{
-	margin: unset;
-	padding:5px;
-	font-weight: 500;
-	
-}
