@@ -16,8 +16,16 @@ function previewPictrure() {
 
     prevImage.classList.add("imagePrevisualise");
     let selectionFichier = document.getElementById("selectioner").files[0];
+    const maxSize = 4 * 1024 * 1024;
+    if (selectionFichier.size > maxSize) {
+      alert("Fichier trop volumineux");
+      iconeImage.style.display = "block";
+      return;
+    }
+
 
     //création et assigantion de l'url du fichier a l'image
+    
     const urlObjet = URL.createObjectURL(selectionFichier);
     prevImage.src = urlObjet;
     sectionPrev.appendChild(prevImage);
@@ -78,13 +86,13 @@ function validationFormulaire() {
       throw new Error("erreur lors du transfert");
     })
     .then((data) => {
-      fermerModale2();
+      // fermerModale2();
       document.querySelector(".formulaire-ajout").reset();
       prevImage.remove();
       iconeImage.style.display = "block";
-      ouvrirModale1();
-      affichageDesMiniature();
-      recuperationTravaux();
+      // ouvrirModale1();
+      // affichageDesMiniature();
+      // recuperationTravaux();
     })
     .catch((error) => {
       console.error(error);
@@ -95,5 +103,9 @@ function validationFormulaire() {
 
 valider.addEventListener("click", (e) => {
   e.preventDefault();
-  validationFormulaire();
+  try {
+    validationFormulaire();
+  } catch (error) {
+    console.error(error);
+  }
 });

@@ -254,6 +254,12 @@ li:hover {
 
 .gallery img {
 	width: 100%;
+}
+
+.gallery .fiche img {
+	object-fit: cover;
+	object-position: center;
+	height: 505.25px;
 
 }
 #contact {
@@ -617,7 +623,7 @@ margin: 30px;
 
 .inserer-photo p {
 	display: flex;
-	aligne-self: center;
+	align-self: center;
 }
 
 #section-ajout input {
@@ -670,6 +676,13 @@ text-align: center;
 
 }
 
-button , a	{
+.bouton-validation, button , a, #bouton-ajouter-photo	{
 	cursor: pointer;
+}
+
+.title{
+	margin: unset;
+	padding:5px;
+	font-weight: 500;
+	
 }
