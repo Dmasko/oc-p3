@@ -1,23 +1,25 @@
 const token = localStorage.getItem("token");
 
-//emplacement affichage miniature
-
 const miniatures = document.querySelector(".affichage-miniature");
+
 //event click dans l'affichage miniature identification de l'id a supprimer
 
-miniatures.addEventListener("click", (e) => {
-  e.preventDefault();
-
-  // Assiganation de l'Id du projet aux bouton de suppression
-  if (e.target.closest(".bouton-delete")) {
+document.querySelector(".affichage-miniature").addEventListener("click", (e) => {
+  const deleteButton = e.target.closest(".bouton-delete");
+  
+  if (deleteButton) {
     e.preventDefault();
-    const emplacementClick = e.target.closest(".bouton-delete");
-    const idDuBouton = emplacementClick.id;
-    //declaration de la fonction suppression
+    const ficheMiniature = deleteButton.closest(".fiche-miniature");
+    const imageUrl = ficheMiniature.querySelector('img').src;
 
-    suppression(idDuBouton);
-    // recuperationTravaux();
-    // affichageDesMiniature();
+    ficheMiniature.remove();
+    document.querySelectorAll('.gallery img').forEach(galerieImage => {
+      if (galerieImage.src === imageUrl) {
+        galerieImage.parentElement.remove();
+      }
+    });
+
+    suppression(deleteButton.id);
   }
 });
 
@@ -36,6 +38,7 @@ function suppression(idDuBouton) {
     .then((reponse) => {
       if (reponse.status == 204) {
         console.log("Suppression du Projet");
+        window.stop();
       } else {
         alert("Erreur dans la suppression du projet");
       }
@@ -44,3 +47,4 @@ function suppression(idDuBouton) {
       alert(ERROR);
     });
 }
+

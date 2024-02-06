@@ -614,6 +614,17 @@ margin: 30px;
 
 }
 
+#messageErreur
+{
+	display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.fa-solid.fa-pen-to-square
+{
+	font-weight: normal;
+}
+
 .fa-image::before{
 
 	display: flex;

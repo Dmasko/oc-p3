@@ -1,8 +1,53 @@
 // Catégorie de filtrage
+const token = localStorage.getItem("token");
+
+
+
+function recuperationTravaux(filtre = "tous") {
+  /*le parametre de la fonction recuperationTravaux indique 
+  l'affichage de filtre tous est l'affichage par defaut*/
+
+  // Récupération elements du tableau travaux de l'API
+
+  fetch("http://localhost:5678/api/works")
+    .then((reponse) => reponse.json())
+    .then((travaux) => {
+      // informations fonctionnement affichage
+
+      if (filtre == "tous") {
+        affichage(travaux);
+
+        // information d'affichage filtrer
+      } else {
+        const filtrage = travaux.filter(function (afichageFiltrer) {
+          return afichageFiltrer.category.name === filtre;
+        });
+
+        //appel de la fonction affichage avec fitrage pour argument
+
+        affichage(filtrage);
+      }
+    });
+}
+
+
+// Appel de la fonction recuperation des travaux
+
+recuperationCategories();
+
+// Appel de la fonction d'affichage par defaut
+
+recuperationTravaux();
+
+
+
+
 
 function recuperationCategories() {
   // Récupération des catégories de l'API (fetch GET)
 
+
+ 
   fetch("http://localhost:5678/api/categories")
     .then((reponse) => reponse.json())
     .then((category) => {
@@ -51,37 +96,6 @@ function recuperationCategories() {
     });
 }
 
-// Récupération des donnés Travaux de l'API
-
-function recuperationTravaux(filtre = "tous") {
-  /*le parametre de la fonction recuperationTravaux indique 
-  l'affichage de filtre tous est l'affichage par defaut*/
-
-  // Récupération elements du tableau travaux de l'API
-
-  fetch("http://localhost:5678/api/works")
-    .then((reponse) => reponse.json())
-    .then((travaux) => {
-      // informations fonctionnement affichage
-
-      if (filtre == "tous") {
-        affichage(travaux);
-
-        // information d'affichage filtrer
-      } else {
-        const filtrage = travaux.filter(function (afichageFiltrer) {
-          return afichageFiltrer.category.name === filtre;
-        });
-
-        //appel de la fonction affichage avec fitrage pour argument
-
-        affichage(filtrage);
-      }
-    });
-}
-
-//Création de l'affichage
-
 function affichage(elementsGalerie) {
   // Choix de l'emplacement parent (balise qui accueui les fiches)
 
@@ -115,129 +129,153 @@ function affichage(elementsGalerie) {
   }
 }
 
-// Appel de la fonction recuperation des travaux
-
-recuperationCategories();
-
-// Appel de la fonction d'affichage par defaut
-
-recuperationTravaux();
-
-// Statut utilisateur connecté
-
-function statutConnecte() {
-  const token = localStorage.getItem("token");
-  const login = document.getElementById("login");
-
-  // Condition du statut connecté
-
-  if (token != null) {
-    // si le token n'est pas null
-
-    //suppression de l'option Login
-    login.style.display = "none";
-
-    //choix de l'emplacemet de la bare de modification
-
-    const header = document.querySelector("header");
-
-    // invertion de l'affichage de la barre de modification et de la nav
-    header.style.flexDirection = "column-reverse";
-    header.style.marginTop = "0px";
-
-    //création de la barre de modification
-    const barreModification = document.createElement("div");
-    barreModification.classList.add("barre-modif");
-
-    // icone modification
-
-    const iconeModifier = document.createElement("i");
-    iconeModifier.classList = "fa-solid fa-pen-to-square";
-    iconeModifier.setAttribute("id", "icone-modifier");
-
-    // label modifier
-
-    const labelModif = document.createElement("p");
-
-    labelModif.innerText = "Mode édition";
-    labelModif.classList.add("mode-edition");
 
 
-   
+const prevImage = document.createElement("img");
+const iconeImage = document.getElementById("icone-image");
+// Prévisualisation de l'image selectionnée
+function previewPictrure() {
+  const sectionPrev = document.getElementById("image-prev");
+  const inputImage = document.getElementById("selectioner");
 
-    //apparition des optionde modification
+  // evenement change pour acceder a l'input file
 
-    const modifier = document.getElementById("modifier");
-    modifier.style.display = "block";
-    modifier.style.textDecoration = "none";
-    const modale1 = document.getElementsByClassName("modales");
-    const modifierProjet = document.getElementById("modifier-projets");
+  inputImage.addEventListener("change", (e) => {
+    iconeImage.style.display = "none";
+    sectionPrev.innerHTML = "";
 
-    modifierProjet.style.display = "block";
-    modifierProjet.style.textDecoration = "none";
+    //création de la prévisualisation
 
-    //Rattachement
+    prevImage.classList.add("imagePrevisualise");
+    let selectionFichier = document.getElementById("selectioner").files[0];
+    const maxSize = 4 * 1024 * 1024;
+    if (selectionFichier.size > maxSize) {
+      alert("Fichier trop volumineux");
+      iconeImage.style.display = "block";
+      return;
+    }
 
-    header.appendChild(barreModification);
-    barreModification.appendChild(iconeModifier);
-    barreModification.appendChild(labelModif);
-  } else {
-    // si le statut n'est pas connecté
 
-    logout.style.display = "none";
-    login.style.display = "block";
-  }
-}
-statutConnecte();
-
-function seDeconnecter() {
-  //selection de l'élement declancheur
-
-  const logout = document.getElementById("logout");
-
-  // Evenement au click
-
-  logout.addEventListener("click", (e) => {
-    e.preventdefault;
-    deconnection();
+    //création et assigantion de l'url du fichier a l'image
+    
+    const urlObjet = URL.createObjectURL(selectionFichier);
+    prevImage.src = urlObjet;
+    sectionPrev.appendChild(prevImage);
   });
 }
-// Deconnection
+previewPictrure();
+// affichage(inputImage);
 
-function deconnection() {
-  // suppression token du localStorage
 
-  const actionDeconnection = localStorage.clear();
 
-  //Rafraichissement de la page
 
-  location.reload();
+function validationFormulaire() {
+  //Capture de l'élément seléctionné
+
+  let selectionFichier = document.getElementById("selectioner").files[0];
+
+  // Valeure du champs titre
+
+  const titre = document.getElementById("titre").value;
+
+  // valeur du champs catégorie
+
+  const categorie = document.getElementById("liste-categories").value;
+
+  //Condition de validation gestion des erreurs
+  console.log(selectionFichier);
+  if (selectionFichier == undefined) {
+    alert("Veuillez choisir une image");
+    return;
+  }
+  if (titre == "") {
+    alert("Veuillez définir un titre");
+    return;
+  }
+  if (categorie == "Champs-selection") {
+    alert("Veuillez selectionner une catégorie");
+    return;
+  }
+
+  // Création FormData avec les éléments du formulaire
+
+  let formData = new FormData();
+  formData.append("image", selectionFichier);
+  formData.append("title", titre);
+  formData.append("category", categorie);
+
+  // Envoie FormData dans la requète poste
+
+  fetch("http://localhost:5678/api/works", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+      body: formData,
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error("erreur lors du transfert");
+    })
+    .then((data) => {
+      // fermerModale2();
+      document.querySelector(".formulaire-ajout").reset();
+      prevImage.remove();
+      iconeImage.style.display = "block";
+      affichageDesMiniature();
+      recuperationTravaux();
+      fermerModale2();
+      ouvrirModale1();
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 
-seDeconnecter();
+//Validation et vérification formulaire
+const valider = document.getElementById("valider-modale2");
+
+
+
+valider.addEventListener("click", (e) => {
+  validationFormulaire();
+
+});
+
+
+
+// Evenement de validation du formulaire
+
+
+
+
+
+
 
 function cancel(){
-const cancel = document.getElementById("cancel");
-const msgcontact = document.getElementById("msgcontact");
-cancel.addEventListener("click", (e) => {
-e.preventDefault();
-console.log("Le formulaire ne fonctionne pas");
-msgcontact.style.display = "block";
-msgcontact.innerHTML = "Le formulaire ne fonctionne pas";
-})}
-
-cancel();
-function validateemail()
-{
-  const emailcontact = document.getElementById("emailcontact");
-  if(!emailcontact.value.match(/^[a-zA-Z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/))
+  const cancel = document.getElementById("cancel");
+  const msgcontact = document.getElementById("msgcontact");
+  cancel.addEventListener("click", (e) => {
+  e.preventDefault();
+  console.log("Le formulaire ne fonctionne pas");
+  msgcontact.style.display = "block";
+  msgcontact.innerHTML = "Le formulaire ne fonctionne pas";
+  })}
+  
+  cancel();
+  function validateemail()
   {
-    msgcontact.style.display = "block";
-    msgcontact.innerHTML = "Veuillez saisir une adresse mail valide";
-    // alert("Veuillez saisir une adresse mail valide");
-    return false;
+    const emailcontact = document.getElementById("emailcontact");
+    if(!emailcontact.value.match(/^[a-zA-Z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/))
+    {
+      msgcontact.style.display = "block";
+      msgcontact.innerHTML = "Veuillez saisir une adresse mail valide";
+      // alert("Veuillez saisir une adresse mail valide");
+      return false;
+    }
+    msgcontact.innerHTML = "";
+    return true;
   }
-  msgcontact.innerHTML = "";
-  return true;
-}
-
+  
